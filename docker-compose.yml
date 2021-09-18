@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  pgsql:
+    image: postgres:alpine
+    ports:
+      - '${DB_PORT}:5432'
+    container_name: 'pgsql'
+    restart: always
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+  clio:
+    container_name: nemo_clio
+    build: .
+    ports:
+      - ${clio_PORT}:${clio_PORT}
+    volumes:
+      - .:/home/clio
+      - /home/clio/node_modules
+    environment:
+      DB_HOST: pgsql
+      DB_PORT: 5432
+    depends_on:
+      - pgsql
+      - adminer
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  pg-data:
