@@ -18,7 +18,7 @@ services:
     container_name: nemo_clio
     build: .
     ports:
-      - ${clio_PORT}:${clio_PORT}
+      - ${CLIO_PORT}:${CLIO_PORT}
     volumes:
       - .:/home/clio
       - /home/clio/node_modules

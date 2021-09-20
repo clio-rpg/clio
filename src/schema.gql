@@ -1,0 +1,41 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type History {
+  id: ID!
+  name: String!
+  slug: String!
+  description: String!
+  origin: String!
+  active: Boolean!
+  deleted: Boolean!
+  private: Boolean!
+}
+
+type Query {
+  histories: [History!]!
+  history(slug: String!): History!
+}
+
+type Mutation {
+  createHistory(createHistoryInput: CreateHistoryInput!): History!
+  updateHistory(updateHistoryInput: UpdateHistoryInput!, id: String!): History!
+  removeHistory(id: String!): Boolean!
+  hardRemoveHistory(id: String!): Boolean!
+}
+
+input CreateHistoryInput {
+  name: String!
+  description: String!
+  origin: String!
+  private: Boolean!
+}
+
+input UpdateHistoryInput {
+  name: String
+  description: String
+  origin: String
+  private: Boolean
+  active: Boolean
+}
