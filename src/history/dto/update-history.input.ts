@@ -1,8 +1,26 @@
 import { CreateHistoryInput } from './create-history.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, PartialType } from '@nestjs/graphql';
+import { IsNotEmpty, IsOptional, IsString, IsBoolean } from 'class-validator';
 
 @InputType()
 export class UpdateHistoryInput extends PartialType(CreateHistoryInput) {
-  @Field(() => Int)
-  id: number;
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  description?: string;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @IsOptional()
+  active?: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @IsOptional()
+  private?: boolean;
 }
