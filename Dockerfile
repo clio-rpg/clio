@@ -1,5 +1,5 @@
 FROM node:alpine
 
-WORKDIR /home/api
+WORKDIR /home/clio
 
 CMD yarn run start:docker:dev
