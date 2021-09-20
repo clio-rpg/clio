@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { HistoryService } from './history.service';
 import { History } from './entities/history.entity';
 import { CreateHistoryInput } from './dto/create-history.input';
@@ -15,28 +15,31 @@ export class HistoryResolver {
     return this.historyService.create(createHistoryInput);
   }
 
-  @Query(() => [History], { name: 'history' })
+  @Query(() => [History], { name: 'histories' })
   findAll() {
     return this.historyService.findAll();
   }
 
   @Query(() => History, { name: 'history' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.historyService.findOne(id);
+  findOne(@Args('slug') slug: string) {
+    return this.historyService.findBySlug(slug);
   }
 
   @Mutation(() => History)
   updateHistory(
+    @Args('id') id: string,
     @Args('updateHistoryInput') updateHistoryInput: UpdateHistoryInput,
   ) {
-    return this.historyService.update(
-      updateHistoryInput.id,
-      updateHistoryInput,
-    );
+    return this.historyService.update(id, updateHistoryInput);
   }
 
-  @Mutation(() => History)
-  removeHistory(@Args('id', { type: () => Int }) id: number) {
+  @Mutation(() => Boolean)
+  removeHistory(@Args('id') id: string) {
     return this.historyService.remove(id);
+  }
+
+  @Mutation(() => Boolean)
+  hardRemoveHistory(@Args('id') id: string) {
+    return this.historyService.hardRemove(id);
   }
 }
