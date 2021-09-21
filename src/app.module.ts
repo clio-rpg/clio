@@ -5,6 +5,7 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HistoryModule } from './history/history.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { HistoryModule } from './history/history.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     HistoryModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

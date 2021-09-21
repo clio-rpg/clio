@@ -13,9 +13,15 @@ type History {
   private: Boolean!
 }
 
+type User {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   histories: [History!]!
   history(slug: String!): History!
+  user(id: Int!): User!
 }
 
 type Mutation {
@@ -23,6 +29,9 @@ type Mutation {
   updateHistory(updateHistoryInput: UpdateHistoryInput!, id: String!): History!
   removeHistory(id: String!): Boolean!
   hardRemoveHistory(id: String!): Boolean!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User!
 }
 
 input CreateHistoryInput {
@@ -38,4 +47,15 @@ input UpdateHistoryInput {
   origin: String
   private: Boolean
   active: Boolean
+}
+
+input CreateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
