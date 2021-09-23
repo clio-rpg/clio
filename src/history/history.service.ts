@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/entities/user.entity';
 import { slugify } from 'src/common/helpers/slug';
 import { Repository } from 'typeorm';
 import { CreateHistoryInput } from './dto/create-history.input';
@@ -17,10 +18,14 @@ export class HistoryService {
     private historyRepository: Repository<History>,
   ) {}
 
-  async create(createHistoryInput: CreateHistoryInput): Promise<History> {
+  async create(
+    createHistoryInput: CreateHistoryInput,
+    user: User,
+  ): Promise<History> {
     const history = await this.historyRepository.create({
       ...createHistoryInput,
       slug: slugify.create(),
+      master: user,
     });
     const historySaved = await this.historyRepository.save(history);
 
@@ -34,12 +39,15 @@ export class HistoryService {
   async findAll(): Promise<History[]> {
     const histories = await this.historyRepository.find({
       where: { private: false },
+      relations: ['users', 'master'],
     });
     return histories;
   }
 
   async findOneById(id: string): Promise<History> {
-    const history = await this.historyRepository.findOne(id);
+    const history = await this.historyRepository.findOne(id, {
+      relations: ['users', 'master'],
+    });
     if (!history) {
       throw new InternalServerErrorException('Error finding history');
     }
@@ -49,6 +57,7 @@ export class HistoryService {
   async findBySlug(slug: string): Promise<History> {
     const history = await this.historyRepository.findOneOrFail({
       where: { slug },
+      relations: ['users', 'master'],
     });
     if (!history) {
       throw new InternalServerErrorException('Error finding history');
@@ -58,6 +67,7 @@ export class HistoryService {
     if (history.private) {
       throw new ForbiddenException('Private history');
     }
+
     return history;
   }
 
@@ -80,5 +90,44 @@ export class HistoryService {
   async hardRemove(id: string): Promise<boolean> {
     const history = await this.findOneById(id);
     return !!(await this.historyRepository.remove(history));
+  }
+
+  async createInviteCode(slug: string): Promise<string> {
+    const history = await this.findBySlug(slug);
+    const inviteCode = slugify.inviteCode();
+    await this.historyRepository.save({
+      ...history,
+      inviteEnabled: true,
+      inviteCode,
+    });
+    return inviteCode;
+  }
+
+  async joinHistoryWithInviteCode(
+    inviteCode: string,
+    user: User,
+  ): Promise<History> {
+    const history = await this.historyRepository.findOneOrFail({
+      where: { inviteCode },
+      relations: ['users', 'master'],
+    });
+    if (!history) {
+      throw new InternalServerErrorException('Error finding history');
+    }
+    if (history.private || !history.inviteEnabled) {
+      throw new ForbiddenException('Private history');
+    }
+    history.users.push(user);
+    await this.historyRepository.save(history);
+    return history;
+  }
+
+  async leaveHistory(slug: string, user: User): Promise<boolean> {
+    const history = await this.findBySlug(slug);
+    history.users.splice(
+      history.users.findIndex((u) => u.id === user.id),
+      1,
+    );
+    return !!(await this.historyRepository.save(history));
   }
 }
