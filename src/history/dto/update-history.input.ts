@@ -23,4 +23,9 @@ export class UpdateHistoryInput extends PartialType(CreateHistoryInput) {
   @IsNotEmpty()
   @IsOptional()
   private?: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @IsOptional()
+  inviteEnabled?: boolean;
 }

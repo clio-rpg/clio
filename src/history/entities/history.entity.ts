@@ -1,11 +1,22 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { Column, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import {
+  Column,
+  PrimaryGeneratedColumn,
+  Entity,
+  ManyToMany,
+  JoinTable,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @ObjectType()
-@Entity()
+@Entity({
+  name: 'histories',
+})
 export class History {
   @Field(() => ID)
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -29,9 +40,29 @@ export class History {
   @Column({ default: true })
   private: boolean;
 
-  //TO-DO: Add master relation
-  // @ManyToOne(() => User, user => user.histories);
-  // master: number;
+  @Column({ default: false, name: 'invite_enabled' })
+  inviteEnabled: boolean;
+
+  @Column({ nullable: true, unique: true, name: 'invite_code' })
+  inviteCode?: string;
+
+  @ManyToOne(() => User, (User) => User.masterHistories, {
+    cascade: true,
+  })
+  @JoinColumn({
+    name: 'master_id',
+    referencedColumnName: 'id',
+  })
+  @Field(() => User)
+  master: User;
 
   //TO-DO: add configs
+
+  @ManyToMany(() => User, { cascade: true })
+  @JoinTable({
+    joinColumn: { name: 'history_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  })
+  @Field(() => [User], { nullable: 'itemsAndList' })
+  users?: User[];
 }
