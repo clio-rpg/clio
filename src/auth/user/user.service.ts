@@ -5,9 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
-import { User } from './user.entity';
+import { CreateUserInput } from '../dto/create-user.input';
+import { UpdateUserInput } from '../dto/update-user.input';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -17,7 +17,9 @@ export class UserService {
   ) {}
 
   async findAll(): Promise<User[]> {
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.find({
+      relations: ['masterHistories', 'histories'],
+    });
     return users;
   }
 
