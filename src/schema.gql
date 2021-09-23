@@ -4,6 +4,8 @@
 
 type History {
   id: ID!
+  master: User!
+  users: [User]
   name: String!
   slug: String!
   description: String!
@@ -11,17 +13,30 @@ type History {
   active: Boolean!
   deleted: Boolean!
   private: Boolean!
+  inviteEnabled: Boolean!
+  inviteCode: String
 }
 
 type User {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: ID!
+  role: String!
+  histories: [History]
+  masterHistories: [History!]
+  username: String!
+  email: String!
+}
+
+type AuthType {
+  user: User!
+  token: String!
 }
 
 type Query {
-  histories: [History!]!
+  histories: [History]!
   history(slug: String!): History!
-  user(id: Int!): User!
+  users: [User]!
+  user(id: String!): User!
+  userByEmail(email: String!): User!
 }
 
 type Mutation {
@@ -29,9 +44,13 @@ type Mutation {
   updateHistory(updateHistoryInput: UpdateHistoryInput!, id: String!): History!
   removeHistory(id: String!): Boolean!
   hardRemoveHistory(id: String!): Boolean!
-  createUser(createUserInput: CreateUserInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: Int!): User!
+  createInviteCode(slug: String!): String!
+  joinHistoryWithInviteCode(inviteCode: String!): History!
+  leaveHistory(slug: String!): Boolean!
+  login(data: AuthInput!): AuthType!
+  createUser(data: CreateUserInput!): User!
+  updateUser(data: UpdateUserInput!, id: String!): User!
+  deleteUser(id: String!): Boolean!
 }
 
 input CreateHistoryInput {
@@ -47,15 +66,22 @@ input UpdateHistoryInput {
   origin: String
   private: Boolean
   active: Boolean
+  inviteEnabled: Boolean
+}
+
+input AuthInput {
+  email: String!
+  password: String!
 }
 
 input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  username: String!
+  email: String!
+  password: String!
 }
 
 input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  username: String
+  email: String
+  password: String
 }
