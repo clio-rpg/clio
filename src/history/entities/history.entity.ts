@@ -11,9 +11,7 @@ import {
 } from 'typeorm';
 
 @ObjectType()
-@Entity({
-  name: 'histories',
-})
+@Entity('histories')
 export class History {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -58,10 +56,10 @@ export class History {
 
   //TO-DO: add configs
 
-  @ManyToMany(() => User, { cascade: true })
+  @ManyToMany(() => User, (user) => user.histories)
   @JoinTable({
-    joinColumn: { name: 'history_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    joinColumn: { name: 'histories_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'users_id', referencedColumnName: 'id' },
   })
   @Field(() => [User], { nullable: 'itemsAndList' })
   users?: User[];
