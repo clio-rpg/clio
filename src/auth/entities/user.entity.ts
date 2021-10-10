@@ -11,9 +11,7 @@ import { Role } from 'src/common/enums/role.enum';
 import { History } from 'src/history/entities/history.entity';
 
 @ObjectType()
-@Entity({
-  name: 'users',
-})
+@Entity('users')
 export class User {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
