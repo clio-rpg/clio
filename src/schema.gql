@@ -61,6 +61,11 @@ type AuthType {
   token: String!
 }
 
+type System {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   histories: [History]!
   history(slug: String!): History!
@@ -71,6 +76,7 @@ type Query {
   character(id: String!): Character!
   characterByHistory(historyId: String!): Character!
   characterByUser: Character!
+  system(id: Int!): System!
 }
 
 type Mutation {
@@ -89,6 +95,9 @@ type Mutation {
   updateCharacter(updateCharacterInput: UpdateCharacterInput!, id: String!): Character!
   removeCharacter(id: String!): Boolean!
   hardRemoveCharacter(id: String!): Boolean!
+  createSystem(createSystemInput: CreateSystemInput!): System!
+  updateSystem(updateSystemInput: UpdateSystemInput!): System!
+  removeSystem(id: Int!): System!
 }
 
 input CreateHistoryInput {
@@ -142,4 +151,15 @@ input UpdateCharacterInput {
   deleted: Boolean
   thumbnail: String
   portrait: String
+}
+
+input CreateSystemInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateSystemInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
