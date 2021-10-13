@@ -1,4 +1,5 @@
 import { Character } from '@clio/character/entities/character.entity';
+import { SystemDetails } from '@clio/common/enums/system.enum';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { User } from 'src/auth/entities/user.entity';
 import {
@@ -72,4 +73,12 @@ export class History {
   })
   @Field(() => [Character], { nullable: 'itemsAndList' })
   characters?: Character[];
+
+  @Column({
+    type: 'enum',
+    enum: SystemDetails,
+    default: SystemDetails.Custom,
+  })
+  @Field(() => SystemDetails)
+  system: SystemDetails;
 }
