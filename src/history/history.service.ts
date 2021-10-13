@@ -64,9 +64,9 @@ export class HistoryService {
     }
 
     //TO-DO: check if private or user is in the user list
-    if (history.private) {
-      throw new ForbiddenException('Private history');
-    }
+    // if (history.private) {
+    //   throw new ForbiddenException('Private history');
+    // }
 
     return history;
   }

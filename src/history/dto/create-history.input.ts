@@ -1,5 +1,6 @@
-import { InputType } from '@nestjs/graphql';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { SystemDetails } from '@clio/common/enums/system.enum';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsBoolean, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
 export class CreateHistoryInput {
@@ -18,4 +19,9 @@ export class CreateHistoryInput {
   @IsBoolean()
   @IsNotEmpty()
   private: boolean;
+
+  @IsEnum(SystemDetails)
+  @IsNotEmpty()
+  @Field(() => SystemDetails)
+  system: SystemDetails;
 }
