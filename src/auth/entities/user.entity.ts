@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Role } from 'src/common/enums/role.enum';
 import { History } from 'src/history/entities/history.entity';
+import { Character } from '@clio/character/entities/character.entity';
 
 @ObjectType()
 @Entity('users')
@@ -44,4 +45,8 @@ export class User {
   @OneToMany(() => History, (history) => history.master)
   @Field(() => [History])
   masterHistories?: History[];
+
+  @OneToMany(() => Character, (character) => character.user)
+  @Field(() => [Character], { nullable: 'itemsAndList' })
+  characters: Character[];
 }

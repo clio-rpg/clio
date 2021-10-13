@@ -1,3 +1,4 @@
+import { Character } from '@clio/character/entities/character.entity';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { User } from 'src/auth/entities/user.entity';
 import {
@@ -63,4 +64,12 @@ export class History {
   })
   @Field(() => [User], { nullable: 'itemsAndList' })
   users?: User[];
+
+  @ManyToMany(() => Character, (character) => character.history)
+  @JoinTable({
+    joinColumn: { name: 'histories_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'characters_id', referencedColumnName: 'id' },
+  })
+  @Field(() => [Character], { nullable: 'itemsAndList' })
+  characters?: Character[];
 }
