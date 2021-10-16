@@ -1,6 +1,4 @@
 import {
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -49,14 +47,6 @@ export class UserService {
   }
 
   async createUser(data: CreateUserInput): Promise<User> {
-    const userAlreadyExists = await this.userRepository.findOne({
-      where: { email: data.email },
-    });
-
-    if (userAlreadyExists) {
-      throw new HttpException('Email already in use', HttpStatus.FORBIDDEN);
-    }
-
     const user = await this.userRepository.create(data);
     const userSaved = await this.userRepository.save(user);
     if (!userSaved) {
