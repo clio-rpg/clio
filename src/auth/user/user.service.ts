@@ -16,15 +16,20 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
+  relations = ['masterHistories', 'histories'];
+
   async findAll(): Promise<User[]> {
     const users = await this.userRepository.find({
-      relations: ['masterHistories', 'histories'],
+      relations: this.relations,
     });
     return users;
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: this.relations,
+    });
     if (!user) {
       throw new NotFoundException(`User with email: ${email} not found`);
     }
@@ -32,7 +37,9 @@ export class UserService {
   }
 
   async findOneById(id: string): Promise<User> {
-    const user = await this.userRepository.findOne(id);
+    const user = await this.userRepository.findOne(id, {
+      relations: this.relations,
+    });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -42,7 +49,6 @@ export class UserService {
   async createUser(data: CreateUserInput): Promise<User> {
     const user = await this.userRepository.create(data);
     const userSaved = await this.userRepository.save(user);
-
     if (!userSaved) {
       throw new InternalServerErrorException('Error creating user');
     }

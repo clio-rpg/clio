@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { CharacterModule } from './character/character.module';
 import GraphQLJSON from 'graphql-type-json';
 import { SystemDetails } from './common/enums/system.enum';
+import { SystemModule } from './system/system.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { SystemDetails } from './common/enums/system.enum';
     HistoryModule,
     AuthModule,
     CharacterModule,
+    SystemModule,
   ],
   controllers: [AppController],
   providers: [AppService],
