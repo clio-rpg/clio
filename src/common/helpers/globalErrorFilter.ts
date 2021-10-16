@@ -14,7 +14,7 @@ export class QueryErrorFilter extends BaseExceptionFilter {
           .replace('Key', messageStart)
           .split('=')
           .join(' ')
-          .replace(/[^\w\s]/gi, ''),
+          .replace(/[()]/g, ''),
       );
     }
     return super.catch(exception, host);
