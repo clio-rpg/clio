@@ -1,3 +1,4 @@
+import { System } from '@clio/system/entities/system.entity';
 import {
   ForbiddenException,
   Injectable,
@@ -16,7 +17,11 @@ export class HistoryService {
   constructor(
     @InjectRepository(History)
     private historyRepository: Repository<History>,
+    @InjectRepository(System)
+    private systemRepository: Repository<System>,
   ) {}
+
+  relations = ['users', 'master', 'system'];
 
   async create(
     createHistoryInput: CreateHistoryInput,
@@ -39,14 +44,14 @@ export class HistoryService {
   async findAll(): Promise<History[]> {
     const histories = await this.historyRepository.find({
       where: { private: false },
-      relations: ['users', 'master'],
+      relations: this.relations,
     });
     return histories;
   }
 
   async findOneById(id: string): Promise<History> {
     const history = await this.historyRepository.findOne(id, {
-      relations: ['users', 'master'],
+      relations: this.relations,
     });
     if (!history) {
       throw new InternalServerErrorException('Error finding history');
@@ -57,7 +62,7 @@ export class HistoryService {
   async findBySlug(slug: string): Promise<History> {
     const history = await this.historyRepository.findOneOrFail({
       where: { slug },
-      relations: ['users', 'master'],
+      relations: this.relations,
     });
     if (!history) {
       throw new InternalServerErrorException('Error finding history');
@@ -76,6 +81,14 @@ export class HistoryService {
     updateHistoryInput: UpdateHistoryInput,
   ): Promise<History> {
     const history = await this.findOneById(id);
+
+    if (updateHistoryInput.systemId) {
+      const system = await this.systemRepository.findOneOrFail(
+        updateHistoryInput.systemId,
+      );
+      history.system = system;
+    }
+
     return await this.historyRepository.save({
       ...history,
       ...updateHistoryInput,
@@ -109,7 +122,7 @@ export class HistoryService {
   ): Promise<History> {
     const history = await this.historyRepository.findOneOrFail({
       where: { inviteCode },
-      relations: ['users', 'master'],
+      relations: this.relations,
     });
     if (!history) {
       throw new InternalServerErrorException('Error finding history');

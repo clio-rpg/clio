@@ -1,5 +1,5 @@
 import { Character } from '@clio/character/entities/character.entity';
-import { SystemDetails } from '@clio/common/enums/system.enum';
+import { System } from '@clio/system/entities/system.entity';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { User } from 'src/auth/entities/user.entity';
 import {
@@ -10,6 +10,7 @@ import {
   JoinTable,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 @ObjectType()
@@ -66,19 +67,17 @@ export class History {
   @Field(() => [User], { nullable: 'itemsAndList' })
   users?: User[];
 
-  @ManyToMany(() => Character, (character) => character.history)
-  @JoinTable({
-    joinColumn: { name: 'histories_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'characters_id', referencedColumnName: 'id' },
-  })
+  @OneToMany(() => Character, (character) => character.history)
   @Field(() => [Character], { nullable: 'itemsAndList' })
   characters?: Character[];
 
-  @Column({
-    type: 'enum',
-    enum: SystemDetails,
-    default: SystemDetails.Custom,
+  @ManyToOne(() => System, (system) => system.histories, {
+    cascade: true,
   })
-  @Field(() => SystemDetails)
-  system: SystemDetails;
+  @JoinColumn({
+    name: 'system_id',
+    referencedColumnName: 'id',
+  })
+  @Field(() => System)
+  system?: System;
 }
