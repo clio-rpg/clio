@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { SystemService } from './system.service';
 import { System } from './entities/system.entity';
 import { CreateSystemInput } from './dto/create-system.input';
@@ -15,25 +15,21 @@ export class SystemResolver {
     return this.systemService.create(createSystemInput);
   }
 
-  @Query(() => [System], { name: 'system' })
-  findAll() {
-    return this.systemService.findAll();
+  @Query(() => System, { name: 'system' })
+  findOne(@Args('id') id: string) {
+    return this.systemService.findOne(id);
   }
 
-  @Query(() => System, { name: 'system' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.systemService.findOne(id);
+  @Query(() => [System], { name: 'publicSystems' })
+  findPublicSystems() {
+    return this.systemService.findAll();
   }
 
   @Mutation(() => System)
   updateSystem(
+    @Args('systemId') id: string,
     @Args('updateSystemInput') updateSystemInput: UpdateSystemInput,
   ) {
-    return this.systemService.update(updateSystemInput.id, updateSystemInput);
-  }
-
-  @Mutation(() => System)
-  removeSystem(@Args('id', { type: () => Int }) id: number) {
-    return this.systemService.remove(id);
+    return this.systemService.update(id, updateSystemInput);
   }
 }
